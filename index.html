@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Porównywarka cen gier</title>
+</head>
+<link rel="stylesheet" href="style.css">
+<body>
+    <section id="banery">
+    <header id="baner1">
+        <p>Compare-Price  </p>
+        
+    </header>
+    <header id="baner2">
+        <select id="lang" onchange="changeLanguage(), searchGame()">
+        <option value="pl">Polski</option>
+        <option value="en">English</option>
+        </select>
+
+    </header>
+</section>
+    <section id="srodek">
+            <nav>
+                <h1>Compare game prices 🎮</h1>
+                
+                <input type="text" id="search" placeholder="Wpisz nazwę gry">
+                
+
+                <button onclick="searchGame()">Szukaj</button>  
+                <select id="sort" onchange="searchGame()">
+                 <option value="default">Domyślnie</option>
+                  <option value="priceAsc">Cena rosnąco</option>
+                  <option value="priceDesc">Cena malejąco</option>
+                  <option value="alpha">Alfabetycznie</option>
+                </select>
+            </nav>
+        <div id="results">
+          
+              </div>
+    </section>
+
+
+
+
+
+  <script>
+   const translations = {
+  pl: {
+    title: "Porównywaj ceny gier 🎮",
+    placeholder: "Wpisz nazwę gry",
+    search: "Szukaj",
+    offer: "Sprawdź ofertę",
+    price: "Najtańsza cena"
+  },
+  en: {
+    title: "Compare game prices 🎮",
+    placeholder: "Enter game name",
+    search: "Search",
+    offer: "Check offer",
+    price: "Lowest price"
+  }
+};
+window.currentLang = "pl";
+
+function changeLanguage() {
+  const lang = document.getElementById("lang").value;
+
+  document.querySelector("nav h1").innerText = translations[lang].title;
+  document.getElementById("search").placeholder = translations[lang].placeholder;
+  document.querySelector("button").innerText = translations[lang].search;
+
+  // dodatkowe tłumaczenia przy renderowaniu wyników
+  window.currentLang = lang;
+  
+}
+
+    
+
+  
+
+
+
+async function searchGame() {
+    const game = document.getElementById("search").value;
+    
+    const sortOption2 = document.getElementById("sort");
+    const res = await fetch(`http://127.0.0.1:8000/search?game=${game}`);
+    let data = await res.json();
+     
+     
+    sortOption2.style.display = "block";
+    // 🔹 sortowanie
+   
+  const sortOption = document.getElementById("sort").value;
+  if (sortOption === "priceAsc") {
+        data.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    } else if (sortOption === "priceDesc") {
+        data.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+    } else if (sortOption === "alpha") {
+        data.sort((a, b) => a.title.localeCompare(b.title));
+    }
+    
+    
+
+    let resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "";
+
+    data.forEach(item => {
+        let div = document.createElement("div");
+        div.className = "game-card";
+        div.innerHTML = `
+            <img src="${item.thumbnail}" alt="${item.title}" />
+            <h3>${item.title}</h3>
+            <p>${translations[window.currentLang].price}: ${item.price} USD</p>
+            <a href="${item.link}" target="_blank">${translations[window.currentLang].offer}</a>
+
+        `;
+        resultsDiv.appendChild(div);
+    });
+}
+
+
+  </script>
+</body>
+</html>
