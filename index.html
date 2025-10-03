@@ -84,7 +84,8 @@ async function searchGame() {
     const game = document.getElementById("search").value;
     
     const sortOption2 = document.getElementById("sort");
-    const res = await fetch(`http://127.0.0.1:8000/search?game=${game}`);
+    const res = await fetch(`https://https://compare-game.netlify.app/search?game=${game}`);
+
     let data = await res.json();
      
      
