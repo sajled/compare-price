@@ -95,10 +95,10 @@ function changeLanguage() {
   document.querySelector("nav h1").innerText = translations[lang].title;
   document.getElementById("search").placeholder = translations[lang].placeholder;
   document.querySelector("button").innerText = translations[lang].search;
-  document.getElementById("regulaminLink").innerHTML = translations[lang].statute;
-  document.getElementById("contactLink").innerHTML = translations[lang].contact;
-  document.getElementById("aboutLink").innerHTML = translations[lang].about;
-  document.getElementById("freeGamesLabel").innerHTML = translations[lang].freeGames;
+  document.getElementById("regulaminLink").innerText = translations[lang].statute;
+  document.getElementById("contactLink").innerText = translations[lang].contact;
+  document.getElementById("aboutLink").innerText = translations[lang].about;
+  document.getElementById("freeGamesLabel").innerText = translations[lang].freeGames;
   // dodatkowe tłumaczenia przy renderowaniu wyników
   window.currentLang = lang;
   
