@@ -3,22 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>Porównywarka cen gier</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4631809342660457"
-     crossorigin="anonymous"></script>
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4631809342660457"
+     crossorigin="anonymous"></script> -->
 </head>
 <link rel="stylesheet" href="style.css">
 <body>
     <section id="banery">
     <header id="baner1">
-        <p>Compare-Price  </p>
+        <p>Compare-Games</p>
         
     </header>
     <header id="baner2">
         <select id="lang" onchange="changeLanguage(), searchGame()">
         <option value="pl">Polski</option>
         <option value="en">English</option>
+        
         </select>
-
+        <a href="regulamin.html">Regulamin</a>
     </header>
 </section>
     <section id="srodek">
@@ -28,24 +29,37 @@
                 <input type="text" id="search" placeholder="Wpisz nazwę gry">
                 
 
-                <button onclick="searchGame()">Szukaj</button>  
-                <button onclick="getFreeGames()">🎁 Darmowe gry</button>
+                <button onclick="searchGame()">Szukaj</button>    
+                
 
-                <select id="sort" onchange="searchGame()">
+                <label class="switch" for="showFree" style="display: inline-flex; align-items: center; gap: 48px; cursor: pointer;">
+                    <input type="checkbox" id="showFree">
+                    <span class="slider"></span> <p>Pokaż darmowe gry</p> 
+                </label>
+                
+
+                
+            </nav>
+            <div id="sortowanie">
+                <p>Sortuj według:</p>
+              <select id="sort" onchange="searchGame()">
                  <option value="default">Domyślnie</option>
                   <option value="priceAsc">Cena rosnąco</option>
                   <option value="priceDesc">Cena malejąco</option>
                   <option value="alpha">Alfabetycznie</option>
                 </select>
-            </nav>
+            </div>
         <div id="results">
           
               </div>
     </section>
 
+    <footer>
 
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4631809342660457"
-     crossorigin="anonymous"></script>
+        <p><a href="privacy.html">Polityka prywatności</a> | <a href="contact.html">Kontakt</a> | <a href="about.html">O nas</a> | <a href="faq.html">FAQ</a></p>
+    </footer>
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4631809342660457"
+     crossorigin="anonymous"></script> -->
 
 
   <script>
@@ -81,71 +95,75 @@ function changeLanguage() {
 
     
 
-  
+
 
 
 
 async function searchGame() {
     const game = document.getElementById("search").value;
-    
-    const sortOption2 = document.getElementById("sort");
+    const sortOption = document.getElementById("sort").value;
+    let showFree = document.getElementById("showFree").checked;
+    const sortOption2 = document.getElementById("sortowanie");
+
+    sortOption2.style.display = "flex"; // pokaż dropdown sortowania po pierwszym wyszukaniu
+    // 🔹 płatne gry (Twój backend na Render)
     const res = await fetch(`https://compare-price-ybbv.onrender.com/search?game=${game}`);
+    let paidGames = await res.json();
 
+    let allGames = [...paidGames];
 
-    let data = await res.json();
-     
-     
-    sortOption2.style.display = "block";
-    // 🔹 sortowanie
-   
-  const sortOption = document.getElementById("sort").value;
-  if (sortOption === "priceAsc") {
-        data.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-    } else if (sortOption === "priceDesc") {
-        data.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-    } else if (sortOption === "alpha") {
-        data.sort((a, b) => a.title.localeCompare(b.title));
+    // 🔹 jeśli zaznaczony toggle → dorzucamy darmowe gry
+    if (showFree) {
+        const freeRes = await fetch(`https://compare-price-ybbv.onrender.com/freegames`);
+        let freeGames = await freeRes.json();
+
+        // filtrujemy po nazwie żeby pasowały do wpisanego tekstu
+        freeGames = freeGames.filter(item =>
+            item.title.toLowerCase().includes(game.toLowerCase())
+        );
+
+        // mapujemy żeby pasowało do formatu płatnych gier
+        freeGames = freeGames.map(item => ({
+            title: item.title,
+            thumbnail: item.thumbnail,
+            price: 0,
+            link: item.game_url
+        }));
+
+        allGames = [...paidGames, ...freeGames];
     }
-    
-    
 
+    // 🔹 sortowanie
+    if (sortOption === "priceAsc") {
+        allGames.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    } else if (sortOption === "priceDesc") {
+        allGames.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+    } else if (sortOption === "alpha") {
+        allGames.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    // 🔹 render wyników
     let resultsDiv = document.getElementById("results");
     resultsDiv.innerHTML = "";
 
-    data.forEach(item => {
+    if (allGames.length === 0) {
+        resultsDiv.innerHTML = "<p>Brak wyników.</p>";
+        return;
+    }
+
+    allGames.forEach(item => {
         let div = document.createElement("div");
         div.className = "game-card";
         div.innerHTML = `
             <img src="${item.thumbnail}" alt="${item.title}" />
             <h3>${item.title}</h3>
-            <p>${translations[window.currentLang].price}: ${item.price} USD</p>
-            <a href="${item.link}" target="_blank">${translations[window.currentLang].offer}</a>
-
+            <p>${parseFloat(item.price) === 0 ? "Darmowa gra 🎉" : "Najtańsza cena: " + item.price + " USD"}</p>
+            <a href="${item.link}" target="_blank">Sprawdź ofertę</a>
         `;
         resultsDiv.appendChild(div);
     });
 }
-  async function getFreeGames() {
-    const res = await fetch("https://www.freetogame.com/api/games");
-    const data = await res.json();
 
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "<h2>Darmowe gry 🎁</h2>";
-
-    data.slice(0, 20).forEach(item => { // pokaż np. 20 pierwszych
-        const div = document.createElement("div");
-        div.className = "game-card";
-        div.innerHTML = `
-            <img src="${item.thumbnail}" alt="${item.title}" />
-            <h3>${item.title}</h3>
-            <p>${item.short_description}</p>
-            <p><b>Platforma:</b> ${item.platform}</p>
-            <p><b>Gatunek:</b> ${item.genre}</p>
-            <a href="${item.game_url}" target="_blank">Zagraj za darmo</a>
-        `;
-        resultsDiv.appendChild(div);
-    });
-}
 
 
   </script>
