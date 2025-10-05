@@ -91,6 +91,19 @@ button:hover {
 .game-card a:hover { 
   background-color: #2980b9; 
 }
+.game-card {
+  background-color: #2a2a2a;
+  color: white;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(255,255,255,0.1);
+  transition: 0.3s;
+}
+.game-card:hover {
+  transform: scale(1.02);
+}
+
 #sort{display: none;}
 #baner1{width: 90%;}
 #baner2{width: 10%; }
