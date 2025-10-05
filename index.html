@@ -3,67 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <title>Porównywarka cen gier</title>
-  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4631809342660457"
-     crossorigin="anonymous"></script> -->
 </head>
 <link rel="stylesheet" href="style.css">
 <body>
     <section id="banery">
-    <header id="baner1">
-        <p>Compare-Games</p>
-        
-    </header>
-    <header id="baner2">
-        <select id="lang" onchange="changeLanguage(), searchGame()">
-        <option value="pl">Polski</option>
-        <option value="en">English</option>
-        
-        </select>
-        <a href="regulamin.html">Regulamin</a>
-    </header>
-</section>
+      <header id="baner1">
+          <p>Compare-Games</p>
+      </header>
+      <header id="baner2">
+          <select id="lang" onchange="changeLanguage(), searchGame()">
+            <option value="pl">Polski</option>
+            <option value="en">English</option>
+          </select>
+          <a href="regulamin.html" id="regulaminLink">Regulamin</a>
+      </header>
+    </section>
+
     <section id="srodek">
-            <nav>
-                <h1>Porównywaj ceny gier 🎮</h1>
-                
-                <input type="text" id="search" placeholder="Wpisz nazwę gry">
-                
+      <nav>
+        <h1>Porównywaj ceny gier 🎮</h1>
+        <input type="text" id="search" placeholder="Wpisz nazwę gry">
+        <button onclick="searchGame()">Szukaj</button>    
 
-                <button onclick="searchGame()">Szukaj</button>    
-                
+        <label class="switch" for="showFree" style="display: inline-flex; align-items: center; gap: 48px; cursor: pointer;">
+          <input type="checkbox" id="showFree">
+          <span class="slider"></span> <p id="freeGamesLabel">Pokaż darmowe gry</p> 
+        </label>
+      </nav>
 
-                <label class="switch" for="showFree" style="display: inline-flex; align-items: center; gap: 48px; cursor: pointer;">
-                    <input type="checkbox" id="showFree">
-                    <span class="slider"></span> <p id="freeGamesLabel">Pokaż darmowe gry</p> 
-                </label>
-                
+      <div id="sortowanie">
+        <p id="sortLabel">Sortuj według:</p>
+        <select id="sort" onchange="searchGame()">
+          <option value="default" id="defaultOption">Domyślnie</option>
+          <option value="priceAsc" id="ascOption">Cena rosnąco</option>
+          <option value="priceDesc" id="descOption">Cena malejąco</option>
+          <option value="alpha" id="alphaOption">Alfabetycznie</option>
+        </select>
+      </div>
 
-                
-            </nav>
-            <div id="sortowanie">
-                <p>Sortuj według:</p>
-              <select id="sort" onchange="searchGame()">
-                 <option value="default">Domyślnie</option>
-                  <option value="priceAsc">Cena rosnąco</option>
-                  <option value="priceDesc">Cena malejąco</option>
-                  <option value="alpha">Alfabetycznie</option>
-                </select>
-            </div>
-        <div id="results">
-          
-              </div>
+      <div id="results"></div>
     </section>
 
     <footer>
-
-        <p><a href="privacy.html" id="privacyLink">Polityka prywatności</a> | <a href="contact.html" id="contactLink">Kontakt</a> | <a href="about.html" id="aboutLink">O nas</a> | <a href="faq.html" id="faqLink">FAQ</a></p>
+      <p>
+        <a href="privacy.html" id="privacyLink">Polityka prywatności</a> | 
+        <a href="contact.html" id="contactLink">Kontakt</a> | 
+        <a href="about.html" id="aboutLink">O nas</a> | 
+        <a href="faq.html" id="faqLink">FAQ</a>
+      </p>
     </footer>
-    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4631809342660457"
-     crossorigin="anonymous"></script> -->
 
-
-  <script>
-   const translations = {
+<script>
+const translations = {
   pl: {
     title: "Porównywaj ceny gier 🎮",
     placeholder: "Wpisz nazwę gry",
@@ -73,10 +64,19 @@
     statute: "Regulamin",
     contact: "Kontakt",
     about: "O nas",
-    freeGames: "Pokaż darmowe gry"
+    privacy: "Polityka prywatności",
+    faq: "FAQ",
+    freeGames: "Pokaż darmowe gry",
+    noResults: "Brak wyników.",
+    freeGamePrice: "Darmowa gra 🎉",
+    sort: "Sortuj według:",
+    default: "Domyślnie",
+    asc: "Cena rosnąco",
+    desc: "Cena malejąco",
+    alpha: "Alfabetycznie"
   },
   en: {
-    title: "Compare games prices 🎮",
+    title: "Compare game prices 🎮",
     placeholder: "Enter game name",
     search: "Search",
     offer: "Check offer",
@@ -84,7 +84,16 @@
     statute: "Statute",
     contact: "Contact",
     about: "About us",
-    freeGames: "Show free games"
+    privacy: "Privacy Policy",
+    faq: "FAQ",
+    freeGames: "Show free games",
+    noResults: "No results.",
+    freeGamePrice: "Free game 🎉",
+    sort: "Sort by:",
+    default: "Default",
+    asc: "Price ascending",
+    desc: "Price descending",
+    alpha: "Alphabetical"
   }
 };
 window.currentLang = "pl";
@@ -98,85 +107,79 @@ function changeLanguage() {
   document.getElementById("regulaminLink").innerText = translations[lang].statute;
   document.getElementById("contactLink").innerText = translations[lang].contact;
   document.getElementById("aboutLink").innerText = translations[lang].about;
+  document.getElementById("privacyLink").innerText = translations[lang].privacy;
+  document.getElementById("faqLink").innerText = translations[lang].faq;
   document.getElementById("freeGamesLabel").innerText = translations[lang].freeGames;
-  // dodatkowe tłumaczenia przy renderowaniu wyników
+
+  document.getElementById("sortLabel").innerText = translations[lang].sort;
+  document.getElementById("defaultOption").innerText = translations[lang].default;
+  document.getElementById("ascOption").innerText = translations[lang].asc;
+  document.getElementById("descOption").innerText = translations[lang].desc;
+  document.getElementById("alphaOption").innerText = translations[lang].alpha;
+
   window.currentLang = lang;
-  
 }
-
-    
-
-
-
-
 
 async function searchGame() {
-    const game = document.getElementById("search").value;
-    const sortOption = document.getElementById("sort").value;
-    let showFree = document.getElementById("showFree").checked;
-    const sortOption2 = document.getElementById("sortowanie");
+  const game = document.getElementById("search").value;
+  const sortOption = document.getElementById("sort").value;
+  let showFree = document.getElementById("showFree").checked;
+  const sortOption2 = document.getElementById("sortowanie");
 
-    sortOption2.style.display = "flex"; // pokaż dropdown sortowania po pierwszym wyszukaniu
-    // 🔹 płatne gry (Twój backend na Render)
-    const res = await fetch(`https://compare-price-ybbv.onrender.com/search?game=${game}`);
-    let paidGames = await res.json();
+  sortOption2.style.display = "flex";
 
-    let allGames = [...paidGames];
+  const res = await fetch(`https://compare-price-ybbv.onrender.com/search?game=${game}`);
+  let paidGames = await res.json();
+  let allGames = [...paidGames];
 
-    // 🔹 jeśli zaznaczony toggle → dorzucamy darmowe gry
-    if (showFree) {
-        const freeRes = await fetch(`https://compare-price-ybbv.onrender.com/freegames`);
-        let freeGames = await freeRes.json();
+  if (showFree) {
+    const freeRes = await fetch(`https://compare-price-ybbv.onrender.com/freegames`);
+    let freeGames = await freeRes.json();
 
-        // filtrujemy po nazwie żeby pasowały do wpisanego tekstu
-        freeGames = freeGames.filter(item =>
-            item.title.toLowerCase().includes(game.toLowerCase())
-        );
+    freeGames = freeGames.filter(item =>
+      item.title.toLowerCase().includes(game.toLowerCase())
+    );
 
-        // mapujemy żeby pasowało do formatu płatnych gier
-        freeGames = freeGames.map(item => ({
-            title: item.title,
-            thumbnail: item.thumbnail,
-            price: 0,
-            link: item.game_url
-        }));
+    freeGames = freeGames.map(item => ({
+      title: item.title,
+      thumbnail: item.thumbnail,
+      price: 0,
+      link: item.game_url
+    }));
 
-        allGames = [...paidGames, ...freeGames];
-    }
+    allGames = [...paidGames, ...freeGames];
+  }
 
-    // 🔹 sortowanie
-    if (sortOption === "priceAsc") {
-        allGames.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-    } else if (sortOption === "priceDesc") {
-        allGames.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
-    } else if (sortOption === "alpha") {
-        allGames.sort((a, b) => a.title.localeCompare(b.title));
-    }
+  if (sortOption === "priceAsc") {
+    allGames.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+  } else if (sortOption === "priceDesc") {
+    allGames.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+  } else if (sortOption === "alpha") {
+    allGames.sort((a, b) => a.title.localeCompare(b.title));
+  }
 
-    // 🔹 render wyników
-    let resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "";
+  let resultsDiv = document.getElementById("results");
+  resultsDiv.innerHTML = "";
 
-    if (allGames.length === 0) {
-        resultsDiv.innerHTML = "<p>Brak wyników.</p>";
-        return;
-    }
+  if (allGames.length === 0) {
+    resultsDiv.innerHTML = `<p>${translations[window.currentLang].noResults}</p>`;
+    return;
+  }
 
-    allGames.forEach(item => {
-        let div = document.createElement("div");
-        div.className = "game-card";
-        div.innerHTML = `
-            <img src="${item.thumbnail}" alt="${item.title}" />
-            <h3>${item.title}</h3>
-            <p>${parseFloat(item.price) === 0 ? "Darmowa gra 🎉" : "Najtańsza cena: " + item.price + " USD"}</p>
-            <a href="${item.link}" target="_blank">Sprawdź ofertę</a>
-        `;
-        resultsDiv.appendChild(div);
-    });
+  allGames.forEach(item => {
+    let div = document.createElement("div");
+    div.className = "game-card";
+    div.innerHTML = `
+      <img src="${item.thumbnail}" alt="${item.title}" />
+      <h3>${item.title}</h3>
+      <p>${parseFloat(item.price) === 0 
+        ? translations[window.currentLang].freeGamePrice 
+        : translations[window.currentLang].price + ": " + item.price + " USD"}</p>
+      <a href="${item.link}" target="_blank">${translations[window.currentLang].offer}</a>
+    `;
+    resultsDiv.appendChild(div);
+  });
 }
-
-
-
-  </script>
+</script>
 </body>
 </html>
