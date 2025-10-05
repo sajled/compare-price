@@ -29,6 +29,8 @@
                 
 
                 <button onclick="searchGame()">Szukaj</button>  
+                <button onclick="getFreeGames()">🎁 Darmowe gry</button>
+
                 <select id="sort" onchange="searchGame()">
                  <option value="default">Domyślnie</option>
                   <option value="priceAsc">Cena rosnąco</option>
@@ -119,6 +121,27 @@ async function searchGame() {
             <p>${translations[window.currentLang].price}: ${item.price} USD</p>
             <a href="${item.link}" target="_blank">${translations[window.currentLang].offer}</a>
 
+        `;
+        resultsDiv.appendChild(div);
+    });
+}
+  async function getFreeGames() {
+    const res = await fetch("https://www.freetogame.com/api/games");
+    const data = await res.json();
+
+    const resultsDiv = document.getElementById("results");
+    resultsDiv.innerHTML = "<h2>Darmowe gry 🎁</h2>";
+
+    data.slice(0, 20).forEach(item => { // pokaż np. 20 pierwszych
+        const div = document.createElement("div");
+        div.className = "game-card";
+        div.innerHTML = `
+            <img src="${item.thumbnail}" alt="${item.title}" />
+            <h3>${item.title}</h3>
+            <p>${item.short_description}</p>
+            <p><b>Platforma:</b> ${item.platform}</p>
+            <p><b>Gatunek:</b> ${item.genre}</p>
+            <a href="${item.game_url}" target="_blank">Zagraj za darmo</a>
         `;
         resultsDiv.appendChild(div);
     });
