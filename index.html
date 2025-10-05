@@ -34,7 +34,7 @@
 
                 <label class="switch" for="showFree" style="display: inline-flex; align-items: center; gap: 48px; cursor: pointer;">
                     <input type="checkbox" id="showFree">
-                    <span class="slider"></span> <p>Pokaż darmowe gry</p> 
+                    <span class="slider"></span> <p id="freeGamesLabel">Pokaż darmowe gry</p> 
                 </label>
                 
 
@@ -56,7 +56,7 @@
 
     <footer>
 
-        <p><a href="privacy.html">Polityka prywatności</a> | <a href="contact.html">Kontakt</a> | <a href="about.html">O nas</a> | <a href="faq.html">FAQ</a></p>
+        <p><a href="privacy.html" id="privacyLink">Polityka prywatności</a> | <a href="contact.html" id="contactLink">Kontakt</a> | <a href="about.html" id="aboutLink">O nas</a> | <a href="faq.html" id="faqLink">FAQ</a></p>
     </footer>
     <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4631809342660457"
      crossorigin="anonymous"></script> -->
@@ -69,14 +69,22 @@
     placeholder: "Wpisz nazwę gry",
     search: "Szukaj",
     offer: "Sprawdź ofertę",
-    price: "Najtańsza cena"
+    price: "Najtańsza cena",
+    statute: "Regulamin",
+    contact: "Kontakt",
+    about: "O nas",
+    freeGames: "Pokaż darmowe gry"
   },
   en: {
-    title: "Compare game prices 🎮",
+    title: "Compare games prices 🎮",
     placeholder: "Enter game name",
     search: "Search",
     offer: "Check offer",
-    price: "Lowest price"
+    price: "Lowest price",
+    statute: "Statute",
+    contact: "Contact",
+    about: "About us",
+    freeGames: "Show free games"
   }
 };
 window.currentLang = "pl";
@@ -87,7 +95,10 @@ function changeLanguage() {
   document.querySelector("nav h1").innerText = translations[lang].title;
   document.getElementById("search").placeholder = translations[lang].placeholder;
   document.querySelector("button").innerText = translations[lang].search;
-
+  document.getElementById("regulaminLink").innerHTML = translations[lang].statute;
+  document.getElementById("contactLink").innerHTML = translations[lang].contact;
+  document.getElementById("aboutLink").innerHTML = translations[lang].about;
+  document.getElementById("freeGamesLabel").innerHTML = translations[lang].freeGames;
   // dodatkowe tłumaczenia przy renderowaniu wyników
   window.currentLang = lang;
   
